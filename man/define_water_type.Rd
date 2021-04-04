@@ -23,20 +23,24 @@ define_water_type(
 
 \item{bind}{Should the water type information be \code{\link{cbind}} with \code{dt} (\code{TRUE}) or should a character vector containing water type abbreviations returned instead (\code{FALSE}; default)}
 }
+\value{
+A vector of water types if \code{bind = FALSE}, otherwise a data frame (\code{dt} and water types bound together).
+}
 \description{
 Defines water type based on potential temperature and practical salinity data from a CTD. Default values are for Kongsfjorden
 }
 \details{
 Water-types are useful in summarizing salinity, temperature and density characteristics of water masses. By default, the water types are returned after the definition in Cottier et al. (2005) with slight modifications to avoid overlaps of water types. \strong{Density} boundaries have not been implemented as these seem to have relatively little meaning on Svalbard after limiting water types using temperature and salinity.
 
-\strong{Custom water type classifications} can be defined using the \code{WM} argument. This argument should be a data frame containing the following column names: type, abb, sal.min, sal.max, temp.min, and temp.max. See the default \code{WM}, \link{kongsfjord_watermasses}, as an example. Rows in the data frame represent separate water types. The "type" column gives the name of the water mass and the "abb" column the abbreviation of the water mass (used in \code{\link{ts_plot}}). The water types are defined using \strong{rectangular} boundaries on salinity (x) - temperature (y) coordinate system. The "sal.min" and "sal.max" columns give the minimum and maximum extent for the x-axis while the corresponding "temp.*" columns define the limits for the y-axis of the rectangles. The rectangles are rendered to polygons inside the function. If water types overlap, the water type that \strong{comes first} in the \code{WM} data frame dominates and defines the water type for a point based on salinity and temperature. Consequently, \strong{one point cannot have more than one water type}. When making the \code{WM} data frame, use \code{Inf} and \code{-Inf} for water types, which do not have positive and negative limits, respectively.
+\strong{Custom water type classifications} can be defined using the \code{WM} argument. This argument should be a data frame containing the following column names: type, abb, sal.min, sal.max, temp.min, and temp.max. See the default \code{WM}, \link{kongsfjord_watermasses}, as an example. Rows in the data frame represent separate water types. The "type" column gives the name of the water mass and the "abb" column the abbreviation of the water mass (used in \code{\link{ts_plot}}). The water types are defined using \strong{rectangular} boundaries on salinity (x) - temperature (y) coordinate system. The "sal.min" and "sal.max" columns give the minimum and maximum extent for the x-axis while the corresponding "temp.*" columns define the limits for the y-axis of the rectangles. If water types overlap, the water type that \strong{comes first} in the \code{WM} data frame dominates and defines the water type for a point based on salinity and temperature. Consequently, \strong{one point cannot have more than one water type}. When making the \code{WM} data frame, use \code{Inf} and \code{-Inf} for water types, which do not have positive and negative limits, respectively.
 
 You can use the \link[=ts_plot]{TS diagram} to check that your custom water types are defined correctly. Note that most sources refer to \strong{potential temperatures} and \strong{practical salinities}. Make sure that your data use the same units and standards than the source when defining water types.
 
-PlotSvalbard also contains a pre-made \code{WM} data frame for the NPI's Rijpfjorden transect (\link{rijpfjord_watermasses}). The water types in this classification have been modified from Pérez-Hernández et al. (2017), which was originally made for the same region without the fjord. The changes include addition of Winter Cooled Water from Cottier et al. (2005) and exlusion of density in the categorization. Instead, salinity threshold of 34.87 for Atlantic and Arctic Intermediate Waters (AIW) was used. This decision is purely due to the difficulty of programming polygons in 3D space. It may cause very minor changes in water mass classification at the boundary of AIW and PSW.
+WaterMass also contains a pre-made \code{WM} data frame for the NPI's Rijpfjorden transect (\link{rijpfjord_watermasses}). The water types in this classification have been modified from Pérez-Hernández et al. (2017), which was originally made for the same region without the fjord. The changes include addition of Winter Cooled Water from Cottier et al. (2005) and exlusion of density in the categorization. Instead, salinity threshold of 34.87 for Atlantic and Arctic Intermediate Waters (AIW) was used. This decision is purely due to the difficulty of programming polygons in 3D space. It may cause very minor changes in water mass classification at the boundary of AIW and PSW.
 }
 \examples{
-dt <- data.frame(temp = c(1, -1, -0.8), sal = c(34, 34.5, 34.9)) # Make example data
+# Make example data
+dt <- data.frame(temp = c(1, -1, -1.5, -0.5, 3), sal = c(34, 34.5, 34.9, 34.9, 34.65)) 
 define_water_type(dt) # returned as a factor
 define_water_type(dt, bind  = TRUE) # returned as a data frame
 }
