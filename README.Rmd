@@ -1,0 +1,18 @@
+---
+output: github_document
+---
+
+```{r, echo = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  message = FALSE, 
+  warning = FALSE,
+  comment = "#>",
+  fig.path = "man/figures/README-"
+)
+```
+
+# WaterMass
+**Water mass classification, TS- and section plots using ggplot2 to aid analysis of oceanographic data. R package version `r packageVersion("WaterMass")`**
+
+This package contains water mass classification, temperature-salinity-, and section plot functions from [PlotSvalbard](https://github.com/MikkoVihtakari/PlotSvalbard). These functions are more up-to-date in this package, which may eventually be usbmitted to CRAN.
