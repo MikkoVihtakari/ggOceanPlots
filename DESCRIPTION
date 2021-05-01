@@ -1,8 +1,8 @@
 Package: WaterMass
 Type: Package
 Title: Helpers for the Analysis of Oceanographic Data
-Version: 0.1.0
-Date: 2021-04-04
+Version: 0.1.1
+Date: 2021-05-01
 Authors@R: c(person("Mikko", "Vihtakari", email = "mikko.vihtakari@hi.no",
                   role = c("aut", "cre"), 
                   comment = c(affiliation = "Institute of Marine Research", 
