@@ -1,5 +1,5 @@
 
-# WaterMass
+# ggOceanPlots
 
 **Water mass classification, TS- and section plots using ggplot2 to aid
 analysis of oceanographic data. R package version 0.1.0**
