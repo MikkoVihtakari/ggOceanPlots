@@ -16,10 +16,16 @@ A dataframe containing water mass definitions for Rijpfjorden.
 \details{
 A pre-made \code{\link[=define_water_type]{WM}} data frame for the NPI's Rijpfjorden transect. The water types in this classification have been modified from Pérez-Hernández et al. (2017), which was originally made for the same region without the fjord. The changes include addition of Winter Cooled Water from Cottier et al. (2005) and exlusion of density in the categorization. Instead, salinity threshold of 34.87 for Atlantic and Arctic Intermediate Waters (AIW) was used. This decision is purely due to the difficulty of programming polygons in 3D space. It may cause very minor changes in water mass classification at the boundary of AIW and PSW.
 }
+\references{
+Pérez-Hernández, M. D., Pickart, R. S., Pavlov, V., Våge, K., Ingvaldsen, R., Sundfjord, A., Renner, A. H. H., et al. 2017. The Atlantic Water boundary current north of Svalbard in late summer. Journal of Geophysical Research: Oceans, 122: 2269–2290. https://doi.wiley.com/10.1002/2016JC012486.
+
+Cottier, F., Tverberg, V., Inall, M., Svendsen, H., Nilsen, F., and Griffiths, C. 2005. Water mass modification in an Arctic fjord through cross-shelf exchange: The seasonal hydrography of Kongsfjorden, Svalbard. Journal of Geophysical Research, 110: C12005. https://doi.wiley.com/10.1029/2004JC002757.
+}
 \seealso{
 Other ts_plot: 
 \code{\link{ctd_kongsfjord}},
 \code{\link{define_water_type}()},
+\code{\link{isfjord_watermasses}},
 \code{\link{kongsfjord_watermasses}},
 \code{\link{ts_plot}()}
 }

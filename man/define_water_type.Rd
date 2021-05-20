@@ -36,7 +36,7 @@ Water-types are useful in summarizing salinity, temperature and density characte
 
 You can use the \link[=ts_plot]{TS diagram} to check that your custom water types are defined correctly. Note that most sources refer to \strong{potential temperatures} and \strong{practical salinities}. Make sure that your data use the same units and standards than the source when defining water types.
 
-WaterMass also contains a pre-made \code{WM} data frame for the NPI's Rijpfjorden transect (\link{rijpfjord_watermasses}). The water types in this classification have been modified from Pérez-Hernández et al. (2017), which was originally made for the same region without the fjord. The changes include addition of Winter Cooled Water from Cottier et al. (2005) and exlusion of density in the categorization. Instead, salinity threshold of 34.87 for Atlantic and Arctic Intermediate Waters (AIW) was used. This decision is purely due to the difficulty of programming polygons in 3D space. It may cause very minor changes in water mass classification at the boundary of AIW and PSW.
+ggOceanPlots also contains a pre-made \code{WM} data frame for the NPI's Rijpfjorden transect (\link{rijpfjord_watermasses}). The water types in this classification have been modified from Pérez-Hernández et al. (2017), which was originally made for the same region without the fjord. The changes include addition of Winter Cooled Water from Cottier et al. (2005) and exclusion of density in the categorization. Instead, salinity threshold of 34.87 for Atlantic and Arctic Intermediate Waters (AIW) was used. This decision is purely due to the difficulty of programming polygons in 3D space. It may cause very minor changes in water mass classification at the boundary of AIW and PSW.
 }
 \examples{
 # Make example data
@@ -52,6 +52,7 @@ Pérez-Hernández M.D., Pickart R.S., Pavlov V. et al. (2017) The Atlantic Water
 \seealso{
 Other ts_plot: 
 \code{\link{ctd_kongsfjord}},
+\code{\link{isfjord_watermasses}},
 \code{\link{kongsfjord_watermasses}},
 \code{\link{rijpfjord_watermasses}},
 \code{\link{ts_plot}()}

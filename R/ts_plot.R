@@ -299,9 +299,9 @@ ts_plot <- function(dt, temp_col = "temp", sal_col = "sal", WM = kongsfjord_wate
     if(is.null(color_scale) & color == "watertype") {
       
       if(any(WM$abb %in% "TAW")) {
-        color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "AW" = "#B6434A", "AIW" = "#056A89", "TAW" = "#FF5F68", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
+        color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "LW" = "#3881AC", "AW" = "#B6434A", "AIW" = "#056A89", "TAW" = "#FF5F68", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
       } else {
-        color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "AW" = "#FF5F68", "AIW" = "#056A89", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
+        color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "LW" = "#3881AC", "AW" = "#FF5F68", "AIW" = "#056A89", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
       }
       
       color_var_name <- "Water type"
