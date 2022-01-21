@@ -54,299 +54,294 @@
 #' symbol_alpha = 0.8, margin_distr = TRUE, xlim = c(32, 35), color = "area") 
 #' @export
 
-# temp_col = "temp"; sal_col = "sal"; WM = kongsfjord_watermasses; color_wmpoly = "grey30"; xlim = NULL; ylim = NULL; color = "watertype"; zoom = TRUE; nlevels = 6; color_isopyc = "grey90"; symbol_shape = 1; symbol_size = 3; symbol_alpha = 0.6; color_scale = NULL; color_var_name = NULL; margin_distr = FALSE; margin_width = 0.15; margin_height = 0.2; plot_data = TRUE; base_size = 10
+## ####
+
+# dt <- ctd; temp_col = "theta"; sal_col = "salinity"; xlim = NULL; ylim = NULL; color = "watertype"; zoom = TRUE; margin_distr = FALSE; nlevels = 4
+# dt = ctd_kongsfjord; temp_col = "temp"; sal_col = "sal"; WM = kongsfjord_watermasses; xlim = NULL; ylim = NULL; color = "watertype"; zoom = FALSE; margin_distr = TRUE; nlevels = 6; symbol_shape = 1; symbol_size = 3; symbol_alpha = 0.6; plot_data = TRUE; color_scale = NULL; color_wmpoly = "grey30"; color_isopyc = "grey90"; base_size = 10
+# dt <- ctd_rijpfjord; temp_col = "theta"; sal_col = "salinity"; WM = rijpfjord_watermasses; xlim = NULL; ylim = NULL; color = "watertype"; zoom = TRUE; margin_distr = FALSE; nlevels = 6; symbol_shape = 1; symbol_size = 3; symbol_alpha = 0.6; color_scale = NULL; color_var_name = NULL; plot_data = TRUE
 
 ts_plot <- function(dt, temp_col = "temp", sal_col = "sal", WM = kongsfjord_watermasses, color_wmpoly = "grey30", xlim = NULL, ylim = NULL, color = "watertype", zoom = TRUE, nlevels = 6, color_isopyc = "grey90", symbol_shape = 1, symbol_size = 3, symbol_alpha = 0.6, color_scale = NULL, color_var_name = NULL, margin_distr = FALSE, margin_width = 0.15, margin_height = 0.2, plot_data = TRUE, base_size = 10) {
-  
-  ## Definitions ####
-  
-  if(color %in% colors()) {
-    scale2color <- FALSE
-  } else if(!is.null(color)) {
-    scale2color <- TRUE
-  } else {
-    scale2color <- FALSE
-    color <- "black"
-  }
-  
-  ## Remove NAs (add NA action eventually)
-  
-  if(any(is.na(dt[[temp_col]]) | is.na(dt[[sal_col]]))) {
-    message(paste0(sum(is.na(dt[[temp_col]])), " NAs in ", temp_col, 
-                  " and ", sum(is.na(dt[[sal_col]])), " in ", sal_col, 
-                  ". Rows containing NAs have been removed."))
-    dt <- dt[!is.na(dt[[temp_col]]) & !is.na(dt[[sal_col]]),]
-  }
-  
-  ## Water types ###
-  if(!is.null(WM)) {
-    dt <- define_water_type(dt, temp_col = temp_col, sal_col = sal_col, WM = WM, bind = TRUE)
-    
-    wm_order <- as.character(unique(WM$abb))
-    WM$abb <- factor(WM$abb, levels = rev(wm_order))
-  }
-  
-  ## Axis limits
-  
-  if(is.null(xlim) & zoom) {
-    xbreaks <- pretty(range(dt[[sal_col]]), n = nlevels)
-    xlim <- range(xbreaks)
-    
+
+## Definitions ####
+
+if(color %in% colors()) {
+  scale2color <- FALSE
+} else if(!is.null(color)) {
+  scale2color <- TRUE
+} else {
+  scale2color <- FALSE
+  color <- "black"
+}
+
+## Water types ###
+if(!is.null(WM)) {
+  dt <- define_water_type(dt, temp_col = temp_col, sal_col = sal_col, WM = WM, bind = TRUE)
+
+  wm_order <- as.character(unique(WM$abb))
+  WM$abb <- factor(WM$abb, levels = rev(wm_order))
+}
+
+## Axis limits
+
+if(is.null(xlim) & zoom) {
+  xbreaks <- pretty(range(dt[[sal_col]]), n = nlevels)
+  xlim <- range(xbreaks)
+
     if(max(dt[[sal_col]]) < 35.15 & xlim[2] == 36) {
-      xlim <- c(xlim[1], 35.15)
-    }
-    
-  } else if(is.null(xlim)) {
-    xbreaks <- pretty(range(c(dt[[sal_col]], c(32, 35))), n = nlevels)
-    xlim <- range(xbreaks)
-    
+    xlim <- c(xlim[1], 35.15)
+  }
+
+} else if(is.null(xlim)) {
+  xbreaks <- pretty(range(c(dt[[sal_col]], c(32, 35))), n = nlevels)
+  xlim <- range(xbreaks)
+
     if(max(dt[[sal_col]]) < 35.15 & xlim[2] == 36) {
-      xlim <- c(xlim[1], 35.15)
-    }
-    
+    xlim <- c(xlim[1], 35.15)
+  }
+
+} else {
+  xbreaks <- pretty(xlim)
+}
+
+if(is.null(ylim) & zoom) {
+  ybreaks <- pretty(range(dt[[temp_col]]), n = nlevels)
+  ylim <- range(ybreaks)
+} else if(is.null(ylim)) {
+  ybreaks <- pretty(range(c(dt[[temp_col]], c(-2, 8))), n = nlevels)
+  ylim <- range(ybreaks)
+} else {
+  ybreaks <- pretty(ylim)
+}
+
+## Isopycnals
+
+if(nlevels > 0) {
+
+  if(zoom) {
+    rho <- oce::swRho(salinity = xlim, temperature = ylim, pressure = rep(1, length(xlim))) - 1000
+    rho_breaks <- pretty(range(rho), n = nlevels, min.n = nlevels %/% 2)
   } else {
-    xbreaks <- pretty(xlim)
+    rho <- oce::swRho(salinity = xlim, temperature = ylim, pressure = rep(1, length(xlim))) - 1000
+    rho_breaks <- pretty(range(rho), n = nlevels-1)
+    #rho_breaks <- seq(10, 30, length.out = nlevels)
   }
-  
-  if(is.null(ylim) & zoom) {
-    ybreaks <- pretty(range(dt[[temp_col]]), n = nlevels)
-    ylim <- range(ybreaks)
-  } else if(is.null(ylim)) {
-    ybreaks <- pretty(range(c(dt[[temp_col]], c(-2, 8))), n = nlevels)
-    ylim <- range(ybreaks)
-  } else {
-    ybreaks <- pretty(ylim)
-  }
-  
-  ## Isopycnals
-  
-  if(nlevels > 0) {
-    
-    if(zoom) {
-      rho <- oce::swRho(salinity = xlim, temperature = ylim, pressure = rep(1, length(xlim))) - 1000
-      rho_breaks <- pretty(range(rho), n = nlevels, min.n = nlevels %/% 2)
-    } else {
-      rho <- oce::swRho(salinity = xlim, temperature = ylim, pressure = rep(1, length(xlim))) - 1000
-      rho_breaks <- pretty(range(rho), n = nlevels-1)
-      #rho_breaks <- seq(10, 30, length.out = nlevels)
-    }
-    
-    temp_breaks <- seq(from = ylim[1], to = ylim[2], by = 0.1)
-    
-    isopycs <- lapply(seq_along(rho_breaks), function(i) {
-      data.frame(temp = temp_breaks, rho = rho_breaks[i], sal = oce::swSTrho(temperature = temp_breaks, density = rho_breaks[i], pressure = 1))
-    })
-    
-    isopycs <- do.call(rbind, isopycs)
-    
-  } else {
-    isopycs <- data.frame(temp = NA, rho = NA, sal = NA)
-  }
-  
-  ## Water mass polygons and text
-  
-  if(!is.null(WM)) {
-    TMP <- lapply(wm_order, function(j) {
-      tmp <- subset(WM, abb == j)
-      
-      poly <- data.frame(abb = tmp$abb, x = c(tmp$sal.min, tmp$sal.max, tmp$sal.max, tmp$sal.min), y = c(tmp$temp.min, tmp$temp.min, tmp$temp.max, tmp$temp.max))
-      
-      text <- data.frame(abb = tmp$abb, x = tmp$sal.min, y = tmp$temp.max)
-      
-      list(poly = poly, text = text)
-    })
-    
-    
-    WMpoly <- do.call(rbind, lapply(TMP, function(j) j$poly))
-    WMtext <- do.call(rbind, lapply(TMP, function(j) j$text))
-    
-    if(zoom) {
-      
-      WMpoly <- WMpoly[WMpoly$abb %in% as.character(unique(dt$watertype)),]
-      WMpoly <- droplevels(WMpoly)
-      
-      WMtext <- WMtext[WMtext$abb %in% as.character(unique(dt$watertype)),]
-      WMtext <- droplevels(WMtext)
-      
-      WMtext$y <- ifelse(WMtext$y > ylim[2], ylim[2], WMtext$y)
-      WMtext$y <- ifelse(WMtext$y < ylim[1], ylim[1], WMtext$y)
-      WMtext$x <- ifelse(WMtext$x > xlim[2], xlim[2], WMtext$x)
-      WMtext$x <- ifelse(WMtext$x < xlim[1], xlim[1], WMtext$x)
-    }
-  }
-  
-  ## Main plot ####
-  
-  ## Water mass polygons
-  
-  if(!is.null(WM)) {
-    p <- ggplot(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size) +
-      geom_polygon(data = WMpoly, aes(x = x, y = y, group = abb), fill = "white", color = color_wmpoly, size = LS(0.5)) +
-      scale_y_continuous(expression(paste("Potential temperature (", degree, "C", ")", sep = "")), breaks = ybreaks) +
-      coord_cartesian(xlim = xlim, ylim = ylim, expand = FALSE) +
-      theme_classic(base_size = base_size) +
-      theme(axis.line = element_line(size = LS(0.5)),
-            axis.ticks = element_line(size = LS(0.5)),
-            panel.border = element_rect(color = "black", size = LS(1), fill = NA),
-            legend.background = element_blank())
-    
-  } else {
-    p <- ggplot(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size) +
-      scale_y_continuous(expression(paste("Potential temperature (", degree, "C", ")", sep = "")), breaks = ybreaks) +
-      coord_cartesian(xlim = xlim, ylim = ylim, expand = FALSE) +
-      theme_classic(base_size = base_size) +
-      theme(axis.line = element_line(size = LS(0.5)),
-            axis.ticks = element_line(size = LS(0.5)),
-            panel.border = element_rect(color = "black", size = LS(1), fill = NA),
-            legend.background = element_blank())
-  }
-  
-  ## Isopycals
-  
-  if(nlevels > 0) {
+
+  temp_breaks <- seq(from = ylim[1], to = ylim[2], by = 0.1)
+
+  isopycs <- lapply(seq_along(rho_breaks), function(i) {
+    data.frame(temp = temp_breaks, rho = rho_breaks[i], sal = oce::swSTrho(temperature = temp_breaks, density = rho_breaks[i], pressure = 1))
+  })
+
+  isopycs <- do.call(rbind, isopycs)
+
+} else {
+  isopycs <- data.frame(temp = NA, rho = NA, sal = NA)
+}
+
+## Water mass polygons and text
+
+if(!is.null(WM)) {
+  TMP <- lapply(wm_order, function(j) {
+  tmp <- subset(WM, abb == j)
+
+  poly <- data.frame(abb = tmp$abb, x = c(tmp$sal.min, tmp$sal.max, tmp$sal.max, tmp$sal.min), y = c(tmp$temp.min, tmp$temp.min, tmp$temp.max, tmp$temp.max))
+
+  text <- data.frame(abb = tmp$abb, x = tmp$sal.min, y = tmp$temp.max)
+
+  list(poly = poly, text = text)
+  })
+
+
+WMpoly <- do.call(rbind, lapply(TMP, function(j) j$poly))
+WMtext <- do.call(rbind, lapply(TMP, function(j) j$text))
+
+if(zoom) {
+
+  WMpoly <- WMpoly[WMpoly$abb %in% as.character(unique(dt$watertype)),]
+  WMpoly <- droplevels(WMpoly)
+
+  WMtext <- WMtext[WMtext$abb %in% as.character(unique(dt$watertype)),]
+  WMtext <- droplevels(WMtext)
+
+  WMtext$y <- ifelse(WMtext$y > ylim[2], ylim[2], WMtext$y)
+  WMtext$y <- ifelse(WMtext$y < ylim[1], ylim[1], WMtext$y)
+  WMtext$x <- ifelse(WMtext$x > xlim[2], xlim[2], WMtext$x)
+  WMtext$x <- ifelse(WMtext$x < xlim[1], xlim[1], WMtext$x)
+}
+}
+
+## Main plot ####
+
+## Water mass polygons
+
+if(!is.null(WM)) {
+   p <- ggplot(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size) +
+    geom_polygon(data = WMpoly, aes(x = x, y = y, group = abb), fill = "white", color = color_wmpoly, size = LS(0.5)) +
+    scale_y_continuous(expression(paste("Potential temperature (", degree, "C", ")", sep = "")), breaks = ybreaks) +
+    coord_cartesian(xlim = xlim, ylim = ylim, expand = FALSE) +
+    theme_classic(base_size = base_size) +
+    theme(axis.line = element_line(size = LS(0.5)),
+      axis.ticks = element_line(size = LS(0.5)),
+      panel.border = element_rect(color = "black", size = LS(1), fill = NA),
+      legend.background = element_blank())
+
+} else {
+  p <- ggplot(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size) +
+    scale_y_continuous(expression(paste("Potential temperature (", degree, "C", ")", sep = "")), breaks = ybreaks) +
+    coord_cartesian(xlim = xlim, ylim = ylim, expand = FALSE) +
+    theme_classic(base_size = base_size) +
+    theme(axis.line = element_line(size = LS(0.5)),
+      axis.ticks = element_line(size = LS(0.5)),
+      panel.border = element_rect(color = "black", size = LS(1), fill = NA),
+      legend.background = element_blank())
+}
+
+## Isopycals
+
+if(nlevels > 0) {
+  p <- p +
+    scale_x_continuous("Practical salinity", breaks = xbreaks,
+    sec.axis = sec_axis(~., breaks = isopycs[isopycs$temp == ylim[2], "sal"], labels = isopycs[isopycs$temp == ylim[2], "rho"], name = "Density")) +
+    geom_line(data = isopycs, aes(x = sal, y = temp, group = rho), color = color_isopyc, size = LS(0.5))
+} else {
+  p <- p +
+    scale_x_continuous("Practical salinity", breaks = xbreaks)
+}
+
+## Data points ###
+
+if(plot_data) {
+  if(scale2color) {
     p <- p +
-      scale_x_continuous("Practical salinity", breaks = xbreaks,
-                         sec.axis = sec_axis(~., breaks = isopycs[isopycs$temp == ylim[2], "sal"], labels = isopycs[isopycs$temp == ylim[2], "rho"], name = "Density")) +
-      geom_line(data = isopycs, aes(x = sal, y = temp, group = rho), color = color_isopyc, size = LS(0.5))
+    geom_point(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size)
   } else {
     p <- p +
-      scale_x_continuous("Practical salinity", breaks = xbreaks)
+    geom_point(data = dt, aes_string(x = sal_col, y = temp_col), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size, color = color)
   }
-  
-  ## Data points ###
-  
-  if(plot_data) {
-    if(scale2color) {
-      p <- p +
-        geom_point(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size)
-    } else {
-      p <- p +
-        geom_point(data = dt, aes_string(x = sal_col, y = temp_col), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size, color = color)
-    }
-  }
-  
-  ## Water mass labels
-  
-  if(!is.null(WM)) {
-    p <- p + geom_text(data = WMtext, aes(x = x, y = y, label = abb), size = FS(base_size*0.8), vjust = 1.2, hjust = -0.1, color = color_wmpoly)
-  }
-  
-  ######################
-  ## Marginal plots ####
-  
-  if(margin_distr & plot_data) {
-    
-    ## Marginal plot for x-axis
-    
-    if(scale2color) {
-      px <- ggplot(data = dt, aes_string(x = sal_col, fill = color)) +
-        geom_density(alpha = 0.5, size = 0.2) +
-        coord_cartesian(xlim = xlim, expand = FALSE) +
-        theme_classic(base_size = base_size) +
-        theme(axis.title = element_blank(),
-              axis.line = element_blank(),
-              axis.ticks = element_blank(),
-              axis.text = element_blank(),
-              legend.position = "none")
-      
-    } else {
-      px <- ggplot(data = dt, aes_string(x = sal_col)) +
-        geom_density(alpha = 0.5, size = 0.2, fill = color) +
-        coord_cartesian(xlim = xlim, expand = FALSE) +
-        theme_classic(base_size = base_size) +
-        theme(axis.title = element_blank(),
-              axis.line = element_blank(),
-              axis.ticks = element_blank(),
-              axis.text = element_blank(),
-              legend.position = "none")
-      
-    }
-    
-    
-    ## Marginal plot for y-axis
-    
-    if(scale2color) {
-      py <- ggplot(data = dt, aes_string(x = temp_col, fill = color)) +
-        geom_density(alpha = 0.5, size = 0.2) +
-        coord_flip(xlim = ylim, expand = FALSE) +
-        theme_classic(base_size = base_size) +
-        theme(axis.title = element_blank(),
-              axis.line = element_blank(),
-              axis.ticks = element_blank(),
-              axis.text = element_blank(),
-              legend.position = "none")
-    } else {
-      py <- ggplot(data = dt, aes_string(x = temp_col)) +
-        geom_density(alpha = 0.5, size = 0.2, fill = color) +
-        coord_flip(xlim = ylim, expand = FALSE) +
-        theme_classic(base_size = base_size) +
-        theme(axis.title = element_blank(),
-              axis.line = element_blank(),
-              axis.ticks = element_blank(),
-              axis.text = element_blank(),
-              legend.position = "none")
-      
-    }
-    
-    
-  }
-  
-  
-  ## Change the color scale for data points
-  
-  if(scale2color & (!is.null(color_scale) | color == "watertype") & plot_data) {
-    
-    if(is.null(color_scale) & color == "watertype") {
-      
-      if(any(WM$abb %in% "TAW")) {
-        color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "LW" = "#3881AC", "AW" = "#B6434A", "AIW" = "#056A89", "TAW" = "#FF5F68", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
-      } else {
-        color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "LW" = "#3881AC", "AW" = "#FF5F68", "AIW" = "#056A89", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
-      }
-      
-      color_var_name <- "Water type"
-    } else {
-      if(is.null(color_var_name)) color_var_name <- color
-    }
-    
-    p <- p + scale_color_manual(name = color_var_name, values = color_scale)
-    
-    if(margin_distr) {
-      px <- px + scale_fill_manual(name = color_var_name, values = color_scale)
-      py <- py + scale_fill_manual(name = color_var_name, values = color_scale)
-    }
-    
-  }
-  
-  ## Finally plotting ####
-  
-  if(margin_distr & plot_data) {
-    
-    if(color %in% names(dt) | color == "watertype") {
-      legend <- cowplot::get_legend(p)
-      legend$vp$x <- unit(.9, 'npc')
-      legend$vp$y <- unit(.9, 'npc')
-    }
-    
-    g <- ggplot2::ggplotGrob(p + theme(legend.position = "none"))
-    
-    panel_id <- g$layout[g$layout$name == "panel",c("t","l")]
-    
-    g <- gtable::gtable_add_cols(g, unit(margin_width,"npc"))
-    g <- gtable::gtable_add_grob(g, ggplot2::ggplotGrob(py), t = panel_id$t, l = ncol(g))
-    
-    g <- gtable::gtable_add_rows(g, unit(margin_height,"npc"), 0)
-    g <- gtable::gtable_add_grob(g, ggplot2::ggplotGrob(px), t = 1, l = panel_id$l)
-    
-    grid::grid.newpage()
-    grid::grid.draw(g)
-    
-    if(color %in% names(dt) | color == "watertype") {
-      grid::grid.draw(legend)
-    }
-    
+}
+
+## Water mass labels
+
+if(!is.null(WM)) {
+  p <- p + geom_text(data = WMtext, aes(x = x, y = y, label = abb), size = FS(base_size*0.8), vjust = 1.2, hjust = -0.1, color = color_wmpoly)
+}
+
+######################
+## Marginal plots ####
+
+if(margin_distr & plot_data) {
+
+## Marginal plot for x-axis
+
+  if(scale2color) {
+    px <- ggplot(data = dt, aes_string(x = sal_col, fill = color)) +
+    geom_density(alpha = 0.5, size = 0.2) +
+    coord_cartesian(xlim = xlim, expand = FALSE) +
+    theme_classic(base_size = base_size) +
+    theme(axis.title = element_blank(),
+      axis.line = element_blank(),
+      axis.ticks = element_blank(),
+      axis.text = element_blank(),
+      legend.position = "none")
+
   } else {
-    p
+    px <- ggplot(data = dt, aes_string(x = sal_col)) +
+    geom_density(alpha = 0.5, size = 0.2, fill = color) +
+    coord_cartesian(xlim = xlim, expand = FALSE) +
+    theme_classic(base_size = base_size) +
+    theme(axis.title = element_blank(),
+      axis.line = element_blank(),
+      axis.ticks = element_blank(),
+      axis.text = element_blank(),
+      legend.position = "none")
+
+  }
+
+
+## Marginal plot for y-axis
+
+  if(scale2color) {
+    py <- ggplot(data = dt, aes_string(x = temp_col, fill = color)) +
+      geom_density(alpha = 0.5, size = 0.2) +
+      coord_flip(xlim = ylim, expand = FALSE) +
+      theme_classic(base_size = base_size) +
+      theme(axis.title = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        legend.position = "none")
+  } else {
+    py <- ggplot(data = dt, aes_string(x = temp_col)) +
+      geom_density(alpha = 0.5, size = 0.2, fill = color) +
+      coord_flip(xlim = ylim, expand = FALSE) +
+      theme_classic(base_size = base_size) +
+      theme(axis.title = element_blank(),
+        axis.line = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        legend.position = "none")
+
+  }
+
+
+}
+
+
+## Change the color scale for data points
+
+if(scale2color & (!is.null(color_scale) | color == "watertype") & plot_data) {
+
+  if(is.null(color_scale) & color == "watertype") {
+    
+    if(any(WM$abb %in% "TAW")) {
+      color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "AW" = "#B6434A", "AIW" = "#056A89", "TAW" = "#FF5F68", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
+    } else {
+      color_scale <- c("AWs" = "#D44F56", "SWs" = "#649971", "ArWs" = "#3881AC", "AW" = "#FF5F68", "AIW" = "#056A89", "IW" = "#82C893", "SW" = "#517D5B", "WCW" = "#B27DA6", "ArW" = "#449BCF", "PSW" = "#449BCF", "Other" = "grey50")
+    }
+    
+    color_var_name <- "Water type"
+  } else {
+    if(is.null(color_var_name)) color_var_name <- color
+  }
+
+ p <- p + scale_color_manual(name = color_var_name, values = color_scale)
+
+ if(margin_distr) {
+ px <- px + scale_fill_manual(name = color_var_name, values = color_scale)
+ py <- py + scale_fill_manual(name = color_var_name, values = color_scale)
+  }
+
+}
+
+## Finally plotting ####
+
+if(margin_distr & plot_data) {
+  
+  if(color %in% names(dt) | color == "watertype") {
+    legend <- cowplot::get_legend(p)
+    legend$vp$x <- unit(.9, 'npc')
+    legend$vp$y <- unit(.9, 'npc')
   }
   
+  g <- ggplot2::ggplotGrob(p + theme(legend.position = "none"))
+
+  panel_id <- g$layout[g$layout$name == "panel",c("t","l")]
+
+  g <- gtable::gtable_add_cols(g, unit(margin_width,"npc"))
+  g <- gtable::gtable_add_grob(g, ggplot2::ggplotGrob(py), t = panel_id$t, l = ncol(g))
+
+  g <- gtable::gtable_add_rows(g, unit(margin_height,"npc"), 0)
+  g <- gtable::gtable_add_grob(g, ggplot2::ggplotGrob(px), t = 1, l = panel_id$l)
+
+  grid::grid.newpage()
+  grid::grid.draw(g)
+  
+  if(color %in% names(dt) | color == "watertype") {
+    grid::grid.draw(legend)
+  }
+  
+} else {
+  p
+}
+
 }

@@ -12,10 +12,11 @@
 ##' @seealso \code{\link{interpolate_spatial}} \code{\link{basemap}}
 ##' @examples data(chlorophyll) ## load an example dataset
 ##' x <- interpolate_spatial(chlorophyll, Subset = "From <= 10", value = "Chla") ## Interpolate
-##' plot(x) ## Plot
+##' plot(x) ## Plot, use plot(x, type = "Svalbard") for real
 ##'
-##' ## PlotSvalbard functions can be expanded by using ggplot2 syntax
-##' plot(x) + geom_text(data = chlorophyll, aes(x = lon.utm, y = lat.utm, label = Station))
+##' ## Can be expanded by using ggplot2 syntax
+##' plot(x) + ggplot2::geom_text(data = chlorophyll, 
+##' ggplot2::aes(x = lon.utm, y = lat.utm, label = Station))
 ##'
 ##' ## Auto limits leave an empty space around the gridded surface.
 ##' ## Changing limits is easiest using the inbuild argument
@@ -25,9 +26,9 @@
 ##' @export
 
 ## Test parameters
-#x = X; basemap = TRUE; type = "kongsfjorden"; col.scale.limits = NULL; legend.label = NA; land.col = "#eeeac4"; gla.col = "grey95"; grid.col = "grey70"; x.lim = NULL; y.lim = NULL
+# basemap = TRUE; type = "Svalbard"; limits = "auto"; limits.lon = 0.001; limits.lat = 0.001; col.scale.limits = NULL; legend.label = NA; round.lat = FALSE; n.lat.grid = 3; round.lon = FALSE; n.lon.grid = 3; keep.glaciers = TRUE; land.col = "grey60"; land.size = 0.1; land.border.col = "black"; gla.col = "grey95"; gla.size = 0.1; gla.border.col = "black"; grid.col = "grey70"; grid.size = 0.1; base_size = 11; legend.position = "right"
 
-plot.spatInt <- function(x, basemap = TRUE, type = "svalbard", limits = "auto", limits.lon = 0.001, limits.lat = 0.001, col.scale.limits = NULL, legend.label = NA, round.lat = FALSE, n.lat.grid = 3, round.lon = FALSE, n.lon.grid = 3, keep.glaciers = TRUE, land.col = "grey60", land.size = 0.1, land.border.col = "black", gla.col = "grey95", gla.size = 0.1, gla.border.col = "black", grid.col = "grey70", grid.size = 0.1, base_size = 11, legend.position = "right", ...) {
+plot.spatInt <- function(x, basemap = TRUE, type = "Arctic", limits = "auto", limits.lon = 0.001, limits.lat = 0.001, col.scale.limits = NULL, legend.label = NA, round.lat = FALSE, n.lat.grid = 3, round.lon = FALSE, n.lon.grid = 3, keep.glaciers = TRUE, land.col = "grey60", land.size = 0.1, land.border.col = "black", gla.col = "grey95", gla.size = 0.1, gla.border.col = "black", grid.col = "grey70", grid.size = 0.1, base_size = 11, legend.position = "right", ...) {
 
 if(basemap) {
 
@@ -37,7 +38,7 @@ if(basemap) {
     limits_utm <- c(min(x$interpolation$Lon), max(x$interpolation$Lon), min(x$interpolation$Lat), max(x$interpolation$Lat))
 
     bound_utm_shp <- sp::Polygon(matrix(c(limits_utm[1], limits_utm[3], limits_utm[1], limits_utm[4], limits_utm[2], limits_utm[4], limits_utm[2], limits_utm[3], limits_utm[1], limits_utm[3]), ncol = 2, byrow = TRUE))
-    bound_utm_shp <- sp::SpatialPolygons(list(sp::Polygons(list(bound_utm_shp), ID = "clip_boundary")), proj4string = sp::CRS(map_projection(type)))
+    bound_utm_shp <- sp::SpatialPolygons(list(sp::Polygons(list(bound_utm_shp), ID = "clip_boundary")), proj4string = sp::CRS(paste0("EPSG:", ggOceanMaps::shapefile_list(type)$crs)))
     tmp <- sp::spTransform(bound_utm_shp, sp::CRS("EPSG:4326"))
     tmpb <- as.data.frame(tmp@bbox)
 
@@ -54,7 +55,7 @@ if(basemap) {
   }
 
 
-X <- eval(parse(text=paste(map_cmd("base_dat"))))
+X <- ggOceanMaps::basemap_data(limits = limits, shapefiles = type, glaciers = keep.glaciers)
 
 if(is.na(legend.label)) {
   if(!is.null(x$variables$unit)) {
@@ -64,17 +65,17 @@ if(is.na(legend.label)) {
 }}
 
 if(keep.glaciers) {
-  if(length(X$Land) == 0) {
-    eval(parse(text=paste(map_cmd("base"), map_cmd("interpl_surface"), map_cmd("grid_utm"), map_cmd("defs_interpl_utm"), sep = "+")))
+  if(length(X$shapefiles$land) == 0) {
+    eval(parse(text=paste(ggOceanMaps::map_cmd("base"), map_cmd_extra("interpl_surface"), map_cmd_extra("defs_interpl_rect"), sep = "+")))
   } else {
-    eval(parse(text=paste(map_cmd("base"), map_cmd("interpl_surface"), map_cmd("land_utm"), map_cmd("glacier_utm"), map_cmd("grid_utm"), map_cmd("defs_interpl_utm"), sep = "+")))
+    eval(parse(text=paste(ggOceanMaps::map_cmd("base"), map_cmd_extra("interpl_surface"), ggOceanMaps::map_cmd("land"), ggOceanMaps::map_cmd("glacier"), ggOceanMaps::map_cmd("defs_rect"), map_cmd_extra("defs_interpl_rect"), sep = "+")))
   }
 
   } else {
-    if(length(X$Land) == 0) {
-    eval(parse(text=paste(map_cmd("base"), map_cmd("interpl_surface"), map_cmd("grid_utm"), map_cmd("defs_interpl_utm"), sep = "+")))
+    if(length(X$shapefiles$land) == 0) {
+      eval(parse(text=paste(ggOceanMaps::map_cmd("base"), map_cmd_extra("interpl_surface"), map_cmd_extra("defs_interpl_rect"), sep = "+")))
     } else {
-    eval(parse(text=paste(map_cmd("base"), map_cmd("interpl_surface"), map_cmd("land_utm"), map_cmd("grid_utm"), map_cmd("defs_interpl_utm"), sep = "+")))
+      eval(parse(text=paste(ggOceanMaps::map_cmd("base"), map_cmd_extra("interpl_surface"), ggOceanMaps::map_cmd("land"), ggOceanMaps::map_cmd("defs_rect"), map_cmd_extra("defs_interpl_rect"), sep = "+")))
     }
 
   }

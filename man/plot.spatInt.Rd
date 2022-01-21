@@ -7,7 +7,7 @@
 \method{plot}{spatInt}(
   x,
   basemap = TRUE,
-  type = "svalbard",
+  type = "Arctic",
   limits = "auto",
   limits.lon = 0.001,
   limits.lat = 0.001,
@@ -54,10 +54,11 @@ Plot method for \code{\link[=interpolate_spatial]{spatInt}} objects.
 \examples{
 data(chlorophyll) ## load an example dataset
 x <- interpolate_spatial(chlorophyll, Subset = "From <= 10", value = "Chla") ## Interpolate
-plot(x) ## Plot
+plot(x) ## Plot, use plot(x, type = "Svalbard") for real
 
-## PlotSvalbard functions can be expanded by using ggplot2 syntax
-plot(x) + geom_text(data = chlorophyll, aes(x = lon.utm, y = lat.utm, label = Station))
+## Can be expanded by using ggplot2 syntax
+plot(x) + ggplot2::geom_text(data = chlorophyll, 
+ggplot2::aes(x = lon.utm, y = lat.utm, label = Station))
 
 ## Auto limits leave an empty space around the gridded surface.
 ## Changing limits is easiest using the inbuild argument

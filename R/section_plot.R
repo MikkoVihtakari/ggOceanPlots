@@ -30,9 +30,6 @@
 #' @param ... Additional arguments passed to color and size scales. See \code{\link[ggplot2]{scale_colour_gradient2}}, \code{\link[ggplot2]{scale_colour_viridis_c}} and \code{\link[ggplot2]{scale_size}}.
 #' @details Note that you can use the ggplot2 color and size scale arguments to adjust the scales as you want. Just place them inside the \code{section_plot} function. See \code{\link[ggplot2]{scale_colour_gradient2}}, \code{\link[ggplot2]{scale_colour_viridis_c}} and \code{\link[ggplot2]{scale_size}}.
 #' @return Returns either an interpolated section (\code{\link[ggplot2]{geom_tile}}) or a bubble (\code{\link[ggplot2]{geom_point}}) ggplot2 object.
-#' @importFrom directlabels geom_dl
-#' @importFrom dplyr summarise group_by
-#' @importFrom scales squish
 #' @importFrom magrittr %>%
 #' @import ggplot2
 #' @author Mikko Vihtakari
@@ -102,7 +99,7 @@ section_plot <- function(df, x, y, z, bottom = NULL, interpolate = FALSE, interp
   if(interpolate) {
     dt <- interpolate_section(df = df, x = x, y = y, z = z, method = interp_method)
 
-    samples <- df %>% dplyr::group_by(across(all_of(x))) %>% summarise(min = min(get(y)), max = max(get(y)))
+    samples <- df %>% dplyr::group_by(dplyr::across(dplyr::all_of(x))) %>% dplyr::summarise(min = min(get(y)), max = max(get(y)))
     names(samples) <- c("x", "min", "max")
   } else {
 
