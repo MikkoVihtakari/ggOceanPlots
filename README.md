@@ -2,7 +2,7 @@
 # ggOceanPlots
 
 **Water mass classification, TS- and section plots using ggplot2 to aid
-analysis of oceanographic data. R package version 0.1.5**
+analysis of oceanographic data. R package version 0.1.6**
 
 This package contains water mass classification, temperature-salinity-,
 and section plot functions from

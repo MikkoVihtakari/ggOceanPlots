@@ -1,7 +1,7 @@
 Package: ggOceanPlots
 Type: Package
 Title: Helpers for the Analysis of Oceanographic Data
-Version: 0.1.5
+Version: 0.1.6
 Date: 2022-01-21
 Authors@R: c(person("Mikko", "Vihtakari", email = "mikko.vihtakari@hi.no",
                   role = c("aut", "cre"), 

@@ -55,10 +55,9 @@
 #' @export
 
 ## ####
+# temp_col = "temp"; sal_col = "sal"; WM = kongsfjord_watermasses; color_wmpoly = "grey30"; xlim = NULL; ylim = NULL; color = "watertype"; zoom = TRUE; nlevels = 6; color_isopyc = "grey90"; symbol_shape = 1; symbol_size = 3; symbol_alpha = 0.6; color_scale = NULL; color_var_name = NULL; margin_distr = FALSE; margin_width = 0.15; margin_height = 0.2; plot_data = TRUE; base_size = 10
 
-# dt <- ctd; temp_col = "theta"; sal_col = "salinity"; xlim = NULL; ylim = NULL; color = "watertype"; zoom = TRUE; margin_distr = FALSE; nlevels = 4
-# dt = ctd_kongsfjord; temp_col = "temp"; sal_col = "sal"; WM = kongsfjord_watermasses; xlim = NULL; ylim = NULL; color = "watertype"; zoom = FALSE; margin_distr = TRUE; nlevels = 6; symbol_shape = 1; symbol_size = 3; symbol_alpha = 0.6; plot_data = TRUE; color_scale = NULL; color_wmpoly = "grey30"; color_isopyc = "grey90"; base_size = 10
-# dt <- ctd_rijpfjord; temp_col = "theta"; sal_col = "salinity"; WM = rijpfjord_watermasses; xlim = NULL; ylim = NULL; color = "watertype"; zoom = TRUE; margin_distr = FALSE; nlevels = 6; symbol_shape = 1; symbol_size = 3; symbol_alpha = 0.6; color_scale = NULL; color_var_name = NULL; plot_data = TRUE
+# dt = dt.S1; temp_col = "Temperature"; sal_col = "Salinity"; WM = df.wm; xlim = c(34.8,35.1); color = "WaterMass"
 
 ts_plot <- function(dt, temp_col = "temp", sal_col = "sal", WM = kongsfjord_watermasses, color_wmpoly = "grey30", xlim = NULL, ylim = NULL, color = "watertype", zoom = TRUE, nlevels = 6, color_isopyc = "grey90", symbol_shape = 1, symbol_size = 3, symbol_alpha = 0.6, color_scale = NULL, color_var_name = NULL, margin_distr = FALSE, margin_width = 0.15, margin_height = 0.2, plot_data = TRUE, base_size = 10) {
 
@@ -117,11 +116,13 @@ if(is.null(ylim) & zoom) {
 
 if(nlevels > 0) {
 
+  tmp <- expand.grid(xlim, ylim)
+  
+  rho <- sort(oce::swRho(salinity = tmp[[1]], temperature = tmp[[2]], pressure = rep(1, nrow(tmp))) - 1000)
+  
   if(zoom) {
-    rho <- oce::swRho(salinity = xlim, temperature = ylim, pressure = rep(1, length(xlim))) - 1000
     rho_breaks <- pretty(range(rho), n = nlevels, min.n = nlevels %/% 2)
   } else {
-    rho <- oce::swRho(salinity = xlim, temperature = ylim, pressure = rep(1, length(xlim))) - 1000
     rho_breaks <- pretty(range(rho), n = nlevels-1)
     #rho_breaks <- seq(10, 30, length.out = nlevels)
   }
