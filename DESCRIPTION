@@ -1,23 +1,26 @@
 Package: ggOceanPlots
 Type: Package
 Title: Helpers for the Analysis of Oceanographic Data
-Version: 0.1.6
-Date: 2022-01-21
+Version: 0.2.0
+Date: 2026-06-18
 Authors@R: c(person("Mikko", "Vihtakari", email = "mikko.vihtakari@hi.no",
-                  role = c("aut", "cre"), 
-                  comment = c(affiliation = "Institute of Marine Research", 
+                  role = c("aut", "cre"),
+                  comment = c(affiliation = "Institute of Marine Research",
                   ORCID = "0000-0003-0371-4319"))
             )
-URL: https://mikkovihtakari.github.io/WaterMass/
-BugReports: https://github.com/MikkoVihtakari/WaterMass/issues
+URL: https://github.com/MikkoVihtakari/ggOceanPlots
+BugReports: https://github.com/MikkoVihtakari/ggOceanPlots/issues
 Description: Provides tools to determine water masses from salinity and
-  temperature data. Contains TS- and section plots that can be expanded
-  using 'ggplot2'. The package has currently been tuned for the Svalbard
-  region.
+  temperature data. Contains temperature-salinity (TS) and section plots
+  that can be expanded using 'ggplot2'. The package has currently been
+  tuned for the Svalbard region.
 Depends: R (>= 3.5.0)
-Imports: ggplot2, gtable, grid, cowplot, oce, dplyr, scales, magrittr, 
-  directlabels, ggOceanMaps, gstat, MBA, reshape2, sp, akima, ggspatial
+Imports: ggplot2 (>= 3.4.0), gtable, grid, cowplot, oce, dplyr, scales,
+  magrittr, directlabels, ggOceanMaps, gstat, MBA, reshape2, sp, akima
+Suggests: knitr, rmarkdown, testthat (>= 3.0.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
+VignetteBuilder: knitr
+RoxygenNote: 8.0.0
+Config/testthat/edition: 3

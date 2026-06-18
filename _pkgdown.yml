@@ -1,0 +1,41 @@
+url: https://mikkovihtakari.github.io/ggOceanPlots/
+
+template:
+  bootstrap: 5
+
+reference:
+- title: Temperature-salinity plots
+  desc: Classify water masses and draw TS diagrams
+  contents:
+  - ts_plot
+  - define_water_type
+- title: Section plots
+  desc: Interpolated sections and bubble plots along a transect
+  contents:
+  - section_plot
+  - interpolate_section
+- title: Spatial interpolation
+  desc: Legacy spatial interpolation (prefer ggOceanMaps; see notes)
+  contents:
+  - interpolate_spatial
+  - plot.spatInt
+  - map_cmd_extra
+- title: Helpers
+  contents:
+  - FS
+  - LS
+  - pretty_log
+- title: Datasets
+  contents:
+  - ctd_kongsfjord
+  - ctd_rijpfjord
+  - chlorophyll
+  - kongsfjord_watermasses
+  - rijpfjord_watermasses
+  - isfjord_watermasses
+
+articles:
+- title: Get started
+  navbar: ~
+  contents:
+  - ggOceanPlots

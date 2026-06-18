@@ -1,0 +1,152 @@
+---
+title: "Getting started with ggOceanPlots"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with ggOceanPlots}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.width = 6,
+  fig.height = 4.5,
+  dpi = 96
+)
+```
+
+```{r setup}
+library(ggOceanPlots)
+```
+
+ggOceanPlots helps you go from a tidy data frame of CTD or bottle data to three
+kinds of oceanographic figure: temperature-salinity (TS) diagrams, water-mass
+classifications, and section plots. It is built on
+[ggplot2](https://ggplot2.tidyverse.org/), so the plots can be extended with
+ordinary ggplot2 syntax.
+
+## Input data
+
+The functions expect a **long/tidy data frame** with one row per observation.
+Column names are supplied as character strings, so your columns can be named
+anything. The package ships with example data:
+
+```{r data}
+str(ctd_kongsfjord)
+```
+
+If you rely on the built-in water masses, use **potential temperature** and
+**practical salinity** — the water-mass boundaries and isopycnals assume those
+units.
+
+## Temperature-salinity diagrams
+
+The default `ts_plot()` colours points by water type, draws isopycnals, and
+labels the relevant water-mass polygons.
+
+```{r ts-default}
+ts_plot(ctd_kongsfjord)
+```
+
+### Controlling colour
+
+The `color` argument behaves differently depending on what you give it:
+
+```{r ts-color}
+# Scale colour to a column in the data
+ts_plot(ctd_kongsfjord, color = "area")
+
+# A single fixed colour (any name from colors())
+ts_plot(ctd_kongsfjord, color = "red")
+```
+
+### Marginal distributions and zoom
+
+`margin_distr = TRUE` adds kernel-density plots to the axes. Note that with
+marginal plots `ts_plot()` draws directly to the graphics device and does **not**
+return a ggplot object. `zoom = FALSE` shows the full water-mass diagram rather
+than zooming to the data.
+
+```{r ts-extras, fig.keep = "last"}
+ts_plot(ctd_kongsfjord, zoom = FALSE)
+```
+
+## Classifying water masses
+
+`define_water_type()` returns the classification, either as a factor or bound to
+the data frame:
+
+```{r classify}
+table(define_water_type(ctd_kongsfjord))
+```
+
+### Custom water masses
+
+A water-mass (`WM`) data frame defines rectangles in salinity (x) – temperature
+(y) space. Overlaps are resolved by row order: the first matching row wins, so
+each point gets exactly one type. Use `Inf` / `-Inf` for open-ended bounds.
+
+```{r custom-wm}
+my_wm <- data.frame(
+  type     = c("Warm", "Cold"),
+  abb      = c("W", "C"),
+  sal.min  = c(34.5, -Inf), sal.max = c(Inf, 34.5),
+  temp.min = c(2, -Inf),    temp.max = c(Inf, 2)
+)
+
+ts_plot(ctd_kongsfjord, WM = my_wm)
+```
+
+The package also bundles `rijpfjord_watermasses` and `isfjord_watermasses`.
+
+## Section plots
+
+`section_plot()` interpolates a section (`interpolate = TRUE`) or draws a bubble
+plot (`interpolate = FALSE`, the default). Supply the x (distance), y (depth) and
+z (variable) columns by name.
+
+```{r section}
+section_plot(ctd_rijpfjord, x = "dist", y = "pressure", z = "temp",
+             bottom = "bdepth", interpolate = TRUE)
+```
+
+A logarithmic y-axis reveals near-surface structure when stations differ greatly
+in depth. With `log_y = TRUE`, supply `ybreaks` in real depths — the transform is
+applied internally.
+
+```{r section-log}
+section_plot(ctd_rijpfjord, x = "dist", y = "pressure", z = "temp",
+             bottom = "bdepth", interpolate = TRUE, log_y = TRUE,
+             contour = c(-1.8, 0, 1, 3))
+```
+
+For sparse data such as water-bottle samples, a bubble plot is often clearer:
+
+```{r bubble}
+section_plot(chlorophyll[grepl("KpN.|Kb[0-4]", chlorophyll$Station), ],
+             x = "lon", y = "From", z = "Chla", zlab = "Chl a")
+```
+
+The interpolation engine (`interpolate_section()`) supports `"mba"` (default,
+multilevel B-spline; needs a square grid so `nx == ny`), `"linear"`, `"spline"`
+and `"idw"`.
+
+## Extending and saving
+
+`ts_plot()` (without `margin_distr`) and `section_plot()` return ggplot2 objects,
+so the usual tools apply:
+
+```{r save, eval = FALSE}
+p <- ts_plot(ctd_kongsfjord) + ggplot2::ggtitle("Kongsfjorden")
+ggplot2::ggsave("ts.png", p, width = 6, height = 5, dpi = 300)
+```
+
+## See also
+
+- [ggOceanMaps](https://mikkovihtakari.github.io/ggOceanMaps/) for plotting the
+  same data on bathymetric maps. For spatial interpolation, prefer ggOceanMaps
+  over the legacy `interpolate_spatial()` in this package.

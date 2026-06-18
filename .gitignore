@@ -47,3 +47,6 @@ README.html
 
 # Rstudio project
 *.Rproj
+
+# R CMD check stray plot file
+Rplots.pdf

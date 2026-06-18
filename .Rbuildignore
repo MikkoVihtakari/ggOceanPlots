@@ -9,3 +9,7 @@
 ^pkgdown$
 ^\.github$
 ^LICENSE$
+^CLAUDE\.md$
+^AGENTS\.md$
+^\.DS_Store$
+^dev$
