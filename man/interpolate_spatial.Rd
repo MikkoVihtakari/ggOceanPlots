@@ -72,7 +72,7 @@ x <- interpolate_spatial(chlorophyll, Subset = "From <= 10", value = "Chla") ## 
 plot(x) ## Plot
 }
 \seealso{
-\code{\link{plot.spatInt}} for plotting; \code{\link{interpolate_section}} for
+\code{\link{plot.spatInt}} for plotting; \code{\link{interpolate_section}} for interpolating oceanographic sections.
 }
 \author{
 Mikko Vihtakari

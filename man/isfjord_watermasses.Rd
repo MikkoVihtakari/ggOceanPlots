@@ -20,12 +20,12 @@ A pre-made \code{\link[=define_water_type]{WM}} data frame for Isfjorden from Sk
 Skogseth, R., Olivier, L. L. A., Nilsen, F., Falck, E., Fraser, N., Tverberg, V., Ledang, A. B., et al. 2020. Variability and decadal trends in the Isfjorden (Svalbard) ocean climate and circulation – An indicator for climate change in the European Arctic. Progress in Oceanography, 187: 102394. https://doi.org/10.1016/j.pocean.2020.102394.
 }
 \seealso{
-Other ts_plot: 
+Other ts_plot:
 \code{\link{ctd_kongsfjord}},
-\code{\link{define_water_type}()},
+\code{\link[=define_water_type]{define_water_type()}},
 \code{\link{kongsfjord_watermasses}},
 \code{\link{rijpfjord_watermasses}},
-\code{\link{ts_plot}()}
+\code{\link[=ts_plot]{ts_plot()}}
 }
 \concept{ts_plot}
 \keyword{datasets}

@@ -115,7 +115,7 @@ section_plot <- function(df, x, y, z, bottom = NULL, interpolate = FALSE, interp
     yzero <- 0.98
     ytick.lim <- 0.95
 
-    if(class(ybreaks) == "waiver") {
+    if(inherits(ybreaks, "waiver")) {
       ybreaks <- pretty_log(10^pretty(range(dt$y), n = 10) - 10)
       ybreaks_actual <- log10(ybreaks + 10)
     } else {
@@ -128,7 +128,7 @@ section_plot <- function(df, x, y, z, bottom = NULL, interpolate = FALSE, interp
     yzero <- -2
     ytick.lim <- -diff(range(df[[y]]))*0.02
 
-    if(class(ybreaks) == "waiver") {
+    if(inherits(ybreaks, "waiver")) {
       ybreaks_actual <- waiver()
     } else {
       ybreaks_actual <- ybreaks
@@ -139,7 +139,7 @@ section_plot <- function(df, x, y, z, bottom = NULL, interpolate = FALSE, interp
 
   if(!is.null(zlim)) {
 
-    if(class(zbreaks) == "waiver") {
+    if(inherits(zbreaks, "waiver")) {
       zbreaks <- pretty(zlim, n = 4)
     }
 
@@ -154,7 +154,7 @@ section_plot <- function(df, x, y, z, bottom = NULL, interpolate = FALSE, interp
     }
 
   } else {
-    if(class(zbreaks) == "waiver") {
+    if(inherits(zbreaks, "waiver")) {
       zlabels <- waiver()
     } else {
       zlabels <- zbreaks
@@ -170,19 +170,19 @@ section_plot <- function(df, x, y, z, bottom = NULL, interpolate = FALSE, interp
 
     p <- ggplot() +
       geom_tile(data = dt, aes(x = x, y = y, fill = z, color = z)) + {
-        if(!is.null(contour)) geom_contour(data = dt, aes(x = x, y = y, z = z), color = contour_color, size = LS(0.5), breaks = contour)
+        if(!is.null(contour)) geom_contour(data = dt, aes(x = x, y = y, z = z), color = contour_color, linewidth = LS(0.5), breaks = contour)
       } + {
         if(!is.null(contour)) {
-          directlabels::geom_dl(data = dt, aes(x = x, y = y, z = z, label = ..level..),
+          directlabels::geom_dl(data = dt, aes(x = x, y = y, z = z, label = after_stat(level)),
             method = list("bottom.pieces", cex = contour_label_cex, vjust = 0.5),
             stat = "contour", color = contour_color, breaks = contour)
         }
       } + {
-        if(sampling_indicator == "lines") geom_segment(data = samples, aes(x = x, xend = x, y = min, yend = max), size = LS(0.5), color = "grey", linetype = 2)
+        if(sampling_indicator == "lines") geom_segment(data = samples, aes(x = x, xend = x, y = min, yend = max), linewidth = LS(0.5), color = "grey", linetype = 2)
       } + {
-        if(sampling_indicator == "points") geom_point(data = df, aes(x = get(x), y = get(y)), size = contour_label_cex, color = "black")
+        if(sampling_indicator == "points") geom_point(data = df, aes(x = .data[[x]], y = .data[[y]]), size = contour_label_cex, color = "black")
       } + {
-        if(sampling_indicator == "ticks") geom_segment(data = samples, aes(x = x, xend = x, y = ytick.lim, yend = yzero), size = LS(1), color = "black")
+        if(sampling_indicator == "ticks") geom_segment(data = samples, aes(x = x, xend = x, y = ytick.lim, yend = yzero), linewidth = LS(1), color = "black")
       } + {
         if(!is.null(bottom)) geom_ribbon(data = bd, aes(x = x, ymax = Inf, ymin = y), fill = "grey90")
       } +

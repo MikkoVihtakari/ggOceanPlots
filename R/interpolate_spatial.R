@@ -27,7 +27,7 @@
 ##' @examples data(chlorophyll) ## load an example dataset
 ##' x <- interpolate_spatial(chlorophyll, Subset = "From <= 10", value = "Chla") ## Interpolate
 ##' plot(x) ## Plot
-##' @seealso \code{\link{plot.spatInt}} for plotting; \code{\link{interpolate_section}} for
+##' @seealso \code{\link{plot.spatInt}} for plotting; \code{\link{interpolate_section}} for interpolating oceanographic sections.
 ##' @importFrom gstat idw
 ##' @importFrom oce integrateTrapezoid
 ##' @import sp
@@ -45,10 +45,10 @@ interpolate_spatial <- function(df, value, Subset = NULL, coords = c("lon.utm", 
 
 if(is.null(Subset)) x <- df else x <- subset(df, eval(parse(text=Subset)))
 
-x <- x[!is.na(x[value]),] ## Remove NAs
+x <- x[!is.na(x[[value]]),] ## Remove NAs
 x <- x[c(station.col, id.cols, name.col, coords, strata.col, value)]
 
-x <- x[order(x[station.col], x[strata.col]),] ## Order
+x <- x[order(x[[station.col]], x[[strata.col]]),] ## Order
 
 if(any(duplicated(x[c(station.col, id.cols, name.col)])) & bin.method != "none") {
   tmp <- split(x, x[c(station.col, id.cols, name.col)], drop = TRUE)

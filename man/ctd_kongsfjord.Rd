@@ -14,12 +14,12 @@ ctd_kongsfjord
 A dataframe containing example CTD data for Kongsfjorden.
 }
 \seealso{
-Other ts_plot: 
-\code{\link{define_water_type}()},
+Other ts_plot:
+\code{\link[=define_water_type]{define_water_type()}},
 \code{\link{isfjord_watermasses}},
 \code{\link{kongsfjord_watermasses}},
 \code{\link{rijpfjord_watermasses}},
-\code{\link{ts_plot}()}
+\code{\link[=ts_plot]{ts_plot()}}
 }
 \concept{ts_plot}
 \keyword{datasets}

@@ -16,7 +16,7 @@ pretty_log(x, f = round)
 Round to pretty log breaks
 }
 \seealso{
-\code{\link{round_any}}
+\code{\link[plyr]{round_any}}
 }
 \author{
 Mikko Vihtakari

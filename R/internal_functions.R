@@ -24,7 +24,7 @@ LS <- function(x) x/2.13
 #'  \code{\link{round}}
 #' @keywords internal
 #' @author Mikko Vihtakari
-#' @seealso \code{\link{round_any}}
+#' @seealso \code{\link[plyr]{round_any}}
 
 pretty_log <- function(x, f = round) {
   x <- round(x, 0)

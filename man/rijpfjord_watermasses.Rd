@@ -22,12 +22,12 @@ Pérez-Hernández, M. D., Pickart, R. S., Pavlov, V., Våge, K., Ingvaldsen, R.,
 Cottier, F., Tverberg, V., Inall, M., Svendsen, H., Nilsen, F., and Griffiths, C. 2005. Water mass modification in an Arctic fjord through cross-shelf exchange: The seasonal hydrography of Kongsfjorden, Svalbard. Journal of Geophysical Research, 110: C12005. https://doi.wiley.com/10.1029/2004JC002757.
 }
 \seealso{
-Other ts_plot: 
+Other ts_plot:
 \code{\link{ctd_kongsfjord}},
-\code{\link{define_water_type}()},
+\code{\link[=define_water_type]{define_water_type()}},
 \code{\link{isfjord_watermasses}},
 \code{\link{kongsfjord_watermasses}},
-\code{\link{ts_plot}()}
+\code{\link[=ts_plot]{ts_plot()}}
 }
 \concept{ts_plot}
 \keyword{datasets}

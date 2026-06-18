@@ -36,11 +36,11 @@
 
 \item{basemap}{Logical. Should basemap from \code{\link[ggOceanMaps]{basemap}} be used? Not implemented}
 
-\item{type}{Type of basemap. See \code{\link{basemap}}. Used only if \code{basemap = TRUE}.}
+\item{type}{Type of basemap. See \code{\link[ggOceanMaps]{basemap}}. Used only if \code{basemap = TRUE}.}
 
-\item{limits}{Map limits. See \code{\link{basemap}}. The option "auto" (default) limits the map using coordinate range in \code{x}. Replace by \code{NULL} to remove the automatic zooming. Alternatively use a numeric vector as described in \code{\link{basemap}} documentation.}
+\item{limits}{Map limits. See \code{\link[ggOceanMaps]{basemap}}. The option "auto" (default) limits the map using coordinate range in \code{x}. Replace by \code{NULL} to remove the automatic zooming. Alternatively use a numeric vector as described in \code{\link[ggOceanMaps]{basemap}} documentation.}
 
-\item{limits.lon, limits.lat, round.lon, round.lat, n.lon.grid, n.lat.grid, land.size, land.col, gla.col, grid.col, land.border.col, gla.size, gla.border.col, grid.size, base_size, keep.glaciers, legend.position}{See \code{\link{basemap}} documentation.}
+\item{limits.lon, limits.lat, round.lon, round.lat, n.lon.grid, n.lat.grid, land.size, land.col, gla.col, grid.col, land.border.col, gla.size, gla.border.col, grid.size, base_size, keep.glaciers, legend.position}{See \code{\link[ggOceanMaps]{basemap}} documentation.}
 
 \item{col.scale.limits}{A numeric vector of lenght 2 defining the limits for color scale of interpolated results. If \code{NULL} (default), the limits will be generated automatically.}
 
@@ -65,7 +65,7 @@ ggplot2::aes(x = lon.utm, y = lat.utm, label = Station))
 plot(x, limits = c(11.4,12.7,78.85,79.05))
 }
 \seealso{
-\code{\link{interpolate_spatial}} \code{\link{basemap}}
+\code{\link{interpolate_spatial}} \code{\link[ggOceanMaps]{basemap}}
 }
 \author{
 Mikko Vihtakari

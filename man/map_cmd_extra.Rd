@@ -9,7 +9,7 @@ map_cmd_extra(command, alternative = FALSE)
 \arguments{
 \item{command}{basemap layer to be added}
 
-\item{alternative}{logical to return alternative formmatting in certain cases. Used to reduce \code{if}-\code{else} statements in \code{\link{basemap}}.}
+\item{alternative}{logical to return alternative formmatting in certain cases. Used to reduce \code{if}-\code{else} statements in \code{\link[ggOceanMaps]{basemap}}.}
 }
 \value{
 A character string containing a ggplot2 plotting command. Use \code{eval(parse(text=...))} to plot the string.
@@ -18,7 +18,7 @@ A character string containing a ggplot2 plotting command. Use \code{eval(parse(t
 Additional basemap elements to \code{ggOceanMaps::map_cmd}
 }
 \details{
-This is an internal function, which is automatically run by the \code{\link{basemap}} function. Common users do not need to worry about these details. Basemap elements can added together using this function, \code{\link[base]{parse}} and \code{\link[base]{eval}}.
+This is an internal function, which is automatically run by the \code{\link[ggOceanMaps]{basemap}} function. Common users do not need to worry about these details. Basemap elements can added together using this function, \code{\link[base]{parse}} and \code{\link[base]{eval}}.
 }
 \examples{
 ## An example for utm map without glaciers or bathymetry
@@ -26,7 +26,7 @@ This is an internal function, which is automatically run by the \code{\link{base
 map_cmd("grid_utm"), map_cmd("defs_utm"), sep = "+")))}
 }
 \seealso{
-\code{\link{basemap}}
+\code{\link[ggOceanMaps]{basemap}}
 }
 \author{
 Mikko Vihtakari

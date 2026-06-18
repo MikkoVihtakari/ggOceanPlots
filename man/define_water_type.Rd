@@ -50,12 +50,12 @@ Cottier F, Tverberg V, Inall M, Svendsen H, Nilsen F, Griffiths C (2005) Water m
 Pérez-Hernández M.D., Pickart R.S., Pavlov V. et al. (2017) The Atlantic Water boundary current north of Svalbard in late summer. Journal of Geophysical Research: Oceans, 122, 2269–2290. doi:10.1002/2016JC012486
 }
 \seealso{
-Other ts_plot: 
+Other ts_plot:
 \code{\link{ctd_kongsfjord}},
 \code{\link{isfjord_watermasses}},
 \code{\link{kongsfjord_watermasses}},
 \code{\link{rijpfjord_watermasses}},
-\code{\link{ts_plot}()}
+\code{\link[=ts_plot]{ts_plot()}}
 }
 \author{
 Mikko Vihtakari

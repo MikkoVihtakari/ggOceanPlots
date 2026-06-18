@@ -173,27 +173,36 @@ if(zoom) {
 
 ## Main plot ####
 
+## Base aesthetics. Map colour to a column only when scaling to a variable
+## (scale2color); for a fixed colour the mapping is applied per-geom below.
+
+if(scale2color) {
+  base_aes <- aes(x = .data[[sal_col]], y = .data[[temp_col]], colour = .data[[color]])
+} else {
+  base_aes <- aes(x = .data[[sal_col]], y = .data[[temp_col]])
+}
+
 ## Water mass polygons
 
 if(!is.null(WM)) {
-   p <- ggplot(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size) +
-    geom_polygon(data = WMpoly, aes(x = x, y = y, group = abb), fill = "white", color = color_wmpoly, size = LS(0.5)) +
+   p <- ggplot(data = dt, mapping = base_aes) +
+    geom_polygon(data = WMpoly, aes(x = x, y = y, group = abb), fill = "white", color = color_wmpoly, linewidth = LS(0.5)) +
     scale_y_continuous(expression(paste("Potential temperature (", degree, "C", ")", sep = "")), breaks = ybreaks) +
     coord_cartesian(xlim = xlim, ylim = ylim, expand = FALSE) +
     theme_classic(base_size = base_size) +
-    theme(axis.line = element_line(size = LS(0.5)),
-      axis.ticks = element_line(size = LS(0.5)),
-      panel.border = element_rect(color = "black", size = LS(1), fill = NA),
+    theme(axis.line = element_line(linewidth = LS(0.5)),
+      axis.ticks = element_line(linewidth = LS(0.5)),
+      panel.border = element_rect(color = "black", linewidth = LS(1), fill = NA),
       legend.background = element_blank())
 
 } else {
-  p <- ggplot(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size) +
+  p <- ggplot(data = dt, mapping = base_aes) +
     scale_y_continuous(expression(paste("Potential temperature (", degree, "C", ")", sep = "")), breaks = ybreaks) +
     coord_cartesian(xlim = xlim, ylim = ylim, expand = FALSE) +
     theme_classic(base_size = base_size) +
-    theme(axis.line = element_line(size = LS(0.5)),
-      axis.ticks = element_line(size = LS(0.5)),
-      panel.border = element_rect(color = "black", size = LS(1), fill = NA),
+    theme(axis.line = element_line(linewidth = LS(0.5)),
+      axis.ticks = element_line(linewidth = LS(0.5)),
+      panel.border = element_rect(color = "black", linewidth = LS(1), fill = NA),
       legend.background = element_blank())
 }
 
@@ -203,7 +212,7 @@ if(nlevels > 0) {
   p <- p +
     scale_x_continuous("Practical salinity", breaks = xbreaks,
     sec.axis = sec_axis(~., breaks = isopycs[isopycs$temp == ylim[2], "sal"], labels = isopycs[isopycs$temp == ylim[2], "rho"], name = "Density")) +
-    geom_line(data = isopycs, aes(x = sal, y = temp, group = rho), color = color_isopyc, size = LS(0.5))
+    geom_line(data = isopycs, aes(x = sal, y = temp, group = rho), color = color_isopyc, linewidth = LS(0.5))
 } else {
   p <- p +
     scale_x_continuous("Practical salinity", breaks = xbreaks)
@@ -214,10 +223,10 @@ if(nlevels > 0) {
 if(plot_data) {
   if(scale2color) {
     p <- p +
-    geom_point(data = dt, aes_string(x = sal_col, y = temp_col, color = color), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size)
+    geom_point(data = dt, aes(x = .data[[sal_col]], y = .data[[temp_col]], colour = .data[[color]]), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size)
   } else {
     p <- p +
-    geom_point(data = dt, aes_string(x = sal_col, y = temp_col), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size, color = color)
+    geom_point(data = dt, aes(x = .data[[sal_col]], y = .data[[temp_col]]), shape = symbol_shape, alpha = symbol_alpha, size = symbol_size, color = color)
   }
 }
 
@@ -235,8 +244,8 @@ if(margin_distr & plot_data) {
 ## Marginal plot for x-axis
 
   if(scale2color) {
-    px <- ggplot(data = dt, aes_string(x = sal_col, fill = color)) +
-    geom_density(alpha = 0.5, size = 0.2) +
+    px <- ggplot(data = dt, aes(x = .data[[sal_col]], fill = .data[[color]])) +
+    geom_density(alpha = 0.5, linewidth = 0.2) +
     coord_cartesian(xlim = xlim, expand = FALSE) +
     theme_classic(base_size = base_size) +
     theme(axis.title = element_blank(),
@@ -246,8 +255,8 @@ if(margin_distr & plot_data) {
       legend.position = "none")
 
   } else {
-    px <- ggplot(data = dt, aes_string(x = sal_col)) +
-    geom_density(alpha = 0.5, size = 0.2, fill = color) +
+    px <- ggplot(data = dt, aes(x = .data[[sal_col]])) +
+    geom_density(alpha = 0.5, linewidth = 0.2, fill = color) +
     coord_cartesian(xlim = xlim, expand = FALSE) +
     theme_classic(base_size = base_size) +
     theme(axis.title = element_blank(),
@@ -262,8 +271,8 @@ if(margin_distr & plot_data) {
 ## Marginal plot for y-axis
 
   if(scale2color) {
-    py <- ggplot(data = dt, aes_string(x = temp_col, fill = color)) +
-      geom_density(alpha = 0.5, size = 0.2) +
+    py <- ggplot(data = dt, aes(x = .data[[temp_col]], fill = .data[[color]])) +
+      geom_density(alpha = 0.5, linewidth = 0.2) +
       coord_flip(xlim = ylim, expand = FALSE) +
       theme_classic(base_size = base_size) +
       theme(axis.title = element_blank(),
@@ -272,8 +281,8 @@ if(margin_distr & plot_data) {
         axis.text = element_blank(),
         legend.position = "none")
   } else {
-    py <- ggplot(data = dt, aes_string(x = temp_col)) +
-      geom_density(alpha = 0.5, size = 0.2, fill = color) +
+    py <- ggplot(data = dt, aes(x = .data[[temp_col]])) +
+      geom_density(alpha = 0.5, linewidth = 0.2, fill = color) +
       coord_flip(xlim = ylim, expand = FALSE) +
       theme_classic(base_size = base_size) +
       theme(axis.title = element_blank(),
